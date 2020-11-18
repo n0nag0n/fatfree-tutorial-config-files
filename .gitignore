@@ -1,2 +1,4 @@
 vendor/
 public/adminer.php
+config/config.php
+config/config.ini

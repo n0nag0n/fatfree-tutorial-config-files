@@ -2,29 +2,21 @@
 
 require(__DIR__.'/../vendor/autoload.php');
 
-// install mariadb/mysql
-// sudo apt-get install mariadb mariadb-server
-
-// sudo apt-get install php-pdo php-mysql php-mysqlnd
-
-// https://adminer.org
+putenv("DB_PASS=123456");
 
 $fw = Base::instance();
 
-$db = new DB\SQL(
-    'mysql:host=localhost;port=3306;dbname=fatfree_tutorial;charset=utf8',
-    'fatfree_user',
-	'testing123',
-	[
-		PDO::ATTR_EMULATE_PREPARES => false,
-		PDO::ATTR_STRINGIFY_FETCHES => false
-	]
-);
+$config_path = __DIR__.'/../config/config.ini';
+if(file_exists($config_path) === false) {
+	die('Missing config file');
+}
+$fw->config($config_path);
 
-$fw->set('DB', $db);
-$fw->set('AUTOLOAD', '../controllers/');
+if(file_exists(__DIR__.'/../config/routes.ini') === false) {
+	die('Missing config file');
+}
+$fw->config(__DIR__.'/../config/routes.ini', true);
 
-$fw->route('GET /', function($fw) { echo "Hello World!"; });
-$fw->route('GET /car-parts', 'Car_Parts_Controller->index');
-$fw->route('GET /car-parts/insert/@car_part_name', 'Car_Parts_Controller->insert');
+require(__DIR__.'/../config/services.php');
+
 $fw->run();
